@@ -1,0 +1,29 @@
+version: '3'
+
+
+services:
+
+  tms-postgres:
+    container_name: tms-postgres
+    image: postgres:14-alpine
+    volumes:
+      - .volumes/postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: tms-db
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 5432:5432
+    networks:
+      - tms-network
+
+volumes:
+  tms-postgres_data:
+    driver: local
+  tms-redis_data:
+    driver: local
+
+networks:
+  tms-network:
+    driver: bridge
+

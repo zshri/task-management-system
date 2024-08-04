@@ -1,0 +1,45 @@
+### Registration Request
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "username": "John Doe",
+  "email": "jo22hrn.doe@example.com",
+  "password": "secret123134"
+}
+### Registration Request 2
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "username": "John Doe",
+  "email": "example.com",
+  "password": "secret123134"
+}
+
+### Authenticate Request
+POST http://localhost:8080/api/v1/auth/authenticate
+Content-Type: application/json
+
+{
+  "email": "jo22hrn.doe@example.com",
+  "password": "secret123134"
+}
+
+### User Request
+GET http://localhost:8080/api/v1/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjcxMzgxOCwiZXhwIjoxNzIyODAwMjE4fQ.w3eQTd_j3wWj3sGZYSc7uZZ5t9R6bupwmhsRCIFM6cM
+
+### User Request
+GET http://localhost:8080/api/v1/users/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjcxMzgxOCwiZXhwIjoxNzIyODAwMjE4fQ.w3eQTd_j3wWj3sGZYSc7uZZ5t9R6bupwmhsRCIFM6cM
+
+### Task Api Test Request
+GET http://localhost:8080/api/v1/tasks
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjcxMzgxOCwiZXhwIjoxNzIyODAwMjE4fQ.w3eQTd_j3wWj3sGZYSc7uZZ5t9R6bupwmhsRCIFM6cM
+
+### Task Api Test Request 2
+GET http://localhost:8080/api/v1/tasks/a
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjcxMzgxOCwiZXhwIjoxNzIyODAwMjE4fQ.w3eQTd_j3wWj3sGZYSc7uZZ5t9R6bupwmhsRCIFM6cM
+
+
