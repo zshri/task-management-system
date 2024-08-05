@@ -5,7 +5,9 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "tasks")
@@ -31,35 +33,29 @@ public class Task {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private String status;
+    private TaskStatus status;
 
     @Column(name = "priority")
     @Enumerated(EnumType.STRING)
-    private String priority;
+    private TaskPriority priority;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "author_id")
     private User author;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "assignee_id")
     private User assignee;
 
-
-
-    @Column(name = "finished")
-    private LocalDate finished;
-
-    @CreatedDate()
     @Column(name = "created", updatable = false)
-    private Long created;
+    private Instant created;
 
-    @LastModifiedDate
     @Column(name = "updated")
-    private Long updated;
+    private Instant updated;
 
 
-
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TaskComment> comments;
 
 
 }
