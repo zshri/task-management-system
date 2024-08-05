@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.taskmanagementsystem.exception.UserNotFoundException;
 import org.example.taskmanagementsystem.model.User;
-import org.example.taskmanagementsystem.model.dto.UserDto;
+import org.example.taskmanagementsystem.model.dto.ResponseUserDto;
 import org.example.taskmanagementsystem.repository.UserRepository;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -22,31 +22,29 @@ public class UserService {
     
     private final UserRepository userRepository;
 
-    public Page<UserDto> getUsersPage(int page, int size) {
+    public Page<ResponseUserDto> getUsersPage(int page, int size) {
         try {
-
             Pageable pageable = PageRequest.of(page, size);
             Page<User> userPage = userRepository.findAll(pageable);
 
-            List<UserDto> userDTOList = userPage.getContent().stream()
+            List<ResponseUserDto> responseUserDTOList = userPage.getContent().stream()
                     .map(this::convertToDto)
                     .collect(Collectors.toList());
 
-            return new PageImpl<>(userDTOList, pageable, userPage.getTotalElements());
+            return new PageImpl<>(responseUserDTOList, pageable, userPage.getTotalElements());
         } catch (Exception e) {
-            // Обработка исключения, например, логирование
             throw new RuntimeException("Error while fetching users", e);
         }
     }
 
-    private UserDto convertToDto(User user) {
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setName(user.getUsername());
-        return userDto;
+    public ResponseUserDto convertToDto(User user) {
+        ResponseUserDto responseUserDto = new ResponseUserDto();
+        responseUserDto.setId(user.getId());
+        responseUserDto.setName(user.getUsername());
+        return responseUserDto;
     }
 
-    public UserDto getUserProfile(Long userId) throws UserNotFoundException {
+    public ResponseUserDto getUserProfile(Long userId) throws UserNotFoundException {
         try {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new UserNotFoundException("User with id " + userId + " not found"));
@@ -54,10 +52,10 @@ public class UserService {
             return convertToDto(user);
         } catch (UserNotFoundException e) {
             log.error("User not found: {}", e.getMessage());
-            throw e; // Переброс исключения для дальнейшей обработки
+            throw e;
         } catch (Exception e) {
             log.error("An error occurred while fetching user profile", e);
-            throw e; // Переброс исключения для дальнейшей обработки
+            throw e;
         }
 
     }

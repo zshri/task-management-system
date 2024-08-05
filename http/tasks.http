@@ -1,0 +1,79 @@
+
+### Получить задачи
+GET http://localhost:8080/api/v1/tasks
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjgwNDA2MSwiZXhwIjoxNzIyODkwNDYxfQ.ady1xb1PU3EiTMAN2ifTU9wZ6-B7KP9B1oJ-0dFHrqY
+
+### Получить задачу
+GET http://localhost:8080/api/v1/tasks/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjgwNDA2MSwiZXhwIjoxNzIyODkwNDYxfQ.ady1xb1PU3EiTMAN2ifTU9wZ6-B7KP9B1oJ-0dFHrqY
+
+### Удалить задачу
+DELETE http://localhost:8080/api/v1/tasks/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjgwNDA2MSwiZXhwIjoxNzIyODkwNDYxfQ.ady1xb1PU3EiTMAN2ifTU9wZ6-B7KP9B1oJ-0dFHrqY
+
+### Создание задачи
+POST http://localhost:8080/api/v1/tasks
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjgwNDA2MSwiZXhwIjoxNzIyODkwNDYxfQ.ady1xb1PU3EiTMAN2ifTU9wZ6-B7KP9B1oJ-0dFHrqY
+
+{
+  "title": "Новая задача",
+  "description": "Описание новой задачи",
+  "status": "PENDING",
+  "priority": "HIGH",
+  "assignee": 1
+}
+### Создание задачи 2
+POST http://localhost:8080/api/v1/tasks
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjcxMzgxOCwiZXhwIjoxNzIyODAwMjE4fQ.w3eQTd_j3wWj3sGZYSc7uZZ5t9R6bupwmhsRCIFM6cM
+
+{
+  "title": "Новая задача",
+  "description": "Описание новой задачи",
+  "status": "PENDING",
+  "priority": "HIGH",
+  "assignee": null
+}
+
+### Создание задачи2
+POST http://localhost:8080/api/v1/tasks
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjcxMzgxOCwiZXhwIjoxNzIyODAwMjE4fQ.w3eQTd_j3wWj3sGZYSc7uZZ5t9R6bupwmhsRCIFM6cM
+
+{
+  "title": "Новая задача",
+  "description": "Описание новой задачи",
+  "status": 1,
+  "priority": 1,
+  "assignee": 1
+}
+
+### Обновление задачи
+PUT http://localhost:8080/api/v1/tasks/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjgwNDA2MSwiZXhwIjoxNzIyODkwNDYxfQ.ady1xb1PU3EiTMAN2ifTU9wZ6-B7KP9B1oJ-0dFHrqY
+
+{
+  "title": "Обновленная задача",
+  "description": "Описание новой задачи",
+  "status": "PENDING",
+  "priority": "HIGH",
+  "assignee": 1
+}
+
+### Обновление задачи юзер 2
+PUT http://localhost:8080/api/v1/tasks/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlMkBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjc5NjI3OCwiZXhwIjoxNzIyODgyNjc4fQ.kcCr8XZK25gYI4aSBR3r6cC_4iR9LHPBAnXdxJzENOM
+
+{
+  "title": "Обновленная задача",
+  "description": "Описание новой задачи",
+  "status": "COMPLETED",
+  "priority": "LOW",
+  "assignee": 2
+}
+
+
+
