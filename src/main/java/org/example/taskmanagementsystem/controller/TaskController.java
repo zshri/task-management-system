@@ -30,7 +30,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-
 @Tag(name="Task Controller")
 @SecurityRequirement(name = "JWT")
 @Slf4j

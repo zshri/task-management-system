@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -78,7 +77,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ResponseError> handleConstraintViolationException(ConstraintViolationException e) {
-        return createErrorResponse(e, HttpStatus.BAD_REQUEST);
+        ResponseError responseError = new ResponseError();
+        responseError.setStatus(HttpStatus.BAD_REQUEST.value());
+        responseError.setMessage("Validation failed");
+        responseError.setError(HttpStatus.BAD_REQUEST.getReasonPhrase());
+        responseError.setTimestamp(Instant.now().toString());
+
+        return new ResponseEntity<>(responseError, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BadCredentialsException.class)

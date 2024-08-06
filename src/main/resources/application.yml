@@ -23,3 +23,22 @@ application:
     jwt:
       secret-key: ${JWT_SECRET_KEY}
       expiration: ${EXPIRATION}
+
+
+---
+
+spring:
+
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tms-test-db
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
