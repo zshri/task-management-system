@@ -1,7 +1,7 @@
 
 ### Получить задачи
 GET http://localhost:8080/api/v1/tasks
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjgwNDA2MSwiZXhwIjoxNzIyODkwNDYxfQ.ady1xb1PU3EiTMAN2ifTU9wZ6-B7KP9B1oJ-0dFHrqY
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqbzIyaHJuLmRvZUBleGFtcGxlLmNvbSIsImlhdCI6MTcyMjk2OTk0MiwiZXhwIjoxNzIzMDU2MzQyfQ.PUHY_wn4DuvrLy952zIkMPLlapUyB67dQjBFQ_-ODRQ
 
 ### Получить задачу
 GET http://localhost:8080/api/v1/tasks/2
