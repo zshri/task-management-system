@@ -1,10 +1,17 @@
 package org.example.taskmanagementsystem.security;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.taskmanagementsystem.exception.UserAlreadyExistsException;
 
+import org.example.taskmanagementsystem.model.dto.ResponseError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
+@Tag(name = "Auth Controller")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -22,11 +30,47 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    @Operation(
+            summary = "Аутентификация пользователя",
+            description = "Позволяет получить токен доступа отправив пользовательские данные"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успешная аутентификация",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseError.class))),
+            @ApiResponse(responseCode = "401", description = "Неавторизован",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseError.class))),
+            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseError.class)))
+    })
     @PostMapping(value = "/authenticate")
-    public ResponseEntity<?> authenticate(@Valid @RequestBody AuthRequest authRequest) {
+    public ResponseEntity<AuthResponse> authenticate(@Valid @RequestBody AuthRequest authRequest) {
         return ResponseEntity.ok(authService.authenticate(authRequest));
     }
 
+    @Operation(
+            summary = "Регистрация пользователя",
+            description = "Позволяет зарегистрировать пользователя"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успешная регистрация",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseError.class))),
+            @ApiResponse(responseCode = "409", description = "Пользователь уже существует",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseError.class))),
+            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ResponseError.class)))
+    })
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) throws UserAlreadyExistsException {
         log.info("Request for register user -> {}", registerRequest.getEmail());

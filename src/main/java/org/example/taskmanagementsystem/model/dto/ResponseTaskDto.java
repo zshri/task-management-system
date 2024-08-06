@@ -1,11 +1,13 @@
 package org.example.taskmanagementsystem.model.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.example.taskmanagementsystem.model.TaskPriority;
 import org.example.taskmanagementsystem.model.TaskStatus;
 
 import java.time.Instant;
 
+@Schema(description = "Задача DTO")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -28,7 +28,7 @@ public class AuthService {
             log.info("User with email: {} - successfully authenticated", authRequest.getEmail());
         } catch (BadCredentialsException e) {
             log.info("User with email: {} - not authenticated", authRequest.getEmail());
-            throw new BadCredentialsException("BadCredentialsException");
+            throw new BadCredentialsException("Bad credentials");
         }
         User user = userRepository.findByEmail(authRequest.getEmail());
         String accessToken = jwtService.generateToken(user);
@@ -41,15 +41,13 @@ public class AuthService {
     public AuthResponse register(RegisterRequest registerRequest) throws UserAlreadyExistsException {
 
         if (userRepository.findByEmail(registerRequest.getEmail()) != null) {
-            throw new UserAlreadyExistsException("");
+            throw new UserAlreadyExistsException("User already exists");
         }
 
         User user = User.builder()
                 .username(registerRequest.getUsername())
                 .email(registerRequest.getEmail())
                 .password(bCryptPasswordEncoder.encode(registerRequest.getPassword()))
-//                .roles(List.of(roleRepository.findByName(DEFAULT_ROLE)))
-//                .roles(List.of(Collections.singleton(Role.ROLE_USER))
                 .build();
 
         userRepository.save(user);
