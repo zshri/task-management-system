@@ -2,6 +2,7 @@ package org.example.taskmanagementsystem.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.taskmanagementsystem.exception.AccessErrorException;
 import org.example.taskmanagementsystem.exception.TaskCommentNotFoundException;
 import org.example.taskmanagementsystem.exception.TaskNotFoundException;
 import org.example.taskmanagementsystem.model.Task;
@@ -17,7 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 
 @Service
@@ -64,13 +64,13 @@ public class TaskCommentService {
         return convertToDto(save);
     }
 
-    public ResponseTaskCommentDto updateComment(Long id, User user, CreateTaskCommentDto createTaskCommentDto) throws TaskNotFoundException, TaskCommentNotFoundException, AccessDeniedException {
+    public ResponseTaskCommentDto updateComment(Long id, User user, CreateTaskCommentDto createTaskCommentDto) throws TaskCommentNotFoundException, AccessErrorException {
 
         TaskComment taskComment = taskCommentRepository.findById(id)
                 .orElseThrow(() -> new TaskCommentNotFoundException("comment not found"));
 
         if (!taskComment.getAuthor().equals(user)) {
-            throw new AccessDeniedException("access denied");
+            throw new AccessErrorException("You do not have permission to update this task");
         }
 
         taskComment.setContent(createTaskCommentDto.getContent());

@@ -1,0 +1,12 @@
+INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (1, 1, '2024-08-06 04:48:36.911143 +00:00', 1, null, 'Описание новой задачи', 'HIGH', 'PENDING', 'Новая задача 1');
+INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (1, 1, '2024-08-06 04:48:46.725414 +00:00', 4, null, 'Описание новой задачи', 'HIGH', 'PENDING', 'Новая задача 4');
+INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (1, 1, '2024-08-06 04:48:43.347928 +00:00', 3, null, 'Описание новой задачи', 'HIGH', 'PENDING', 'Новая задача 3');
+INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (1, 2, '2024-08-06 04:49:14.588637 +00:00', 10, null, 'Описание новой задачи', 'LOW', 'PENDING', 'Новая задача 10');
+INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (1, 1, '2024-08-06 04:48:37.836071 +00:00', 2, null, 'Описание новой задачи', 'HIGH', 'PENDING', 'Новая задача 2');
+INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (1, 1, '2024-08-06 04:49:08.301995 +00:00', 5, null, 'Описание новой задачи', 'HIGH', 'PENDING', 'Новая задача 5');
+INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (1, 2, '2024-08-06 04:49:09.159494 +00:00', 6, null, 'Описание новой задачи', 'LOW', 'PENDING', 'Новая задача 6');
+INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (1, 2, '2024-08-06 04:49:10.663884 +00:00', 8, null, 'Описание новой задачи', 'LOW', 'PENDING', 'Новая задача 8');
+INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (1, 2, '2024-08-06 04:49:10.020634 +00:00', 7, null, 'Описание новой задачи', 'LOW', 'PENDING', 'Новая задача 7');
+INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (1, 2, '2024-08-06 04:49:13.700360 +00:00', 9, null, 'Описание новой задачи', 'LOW', 'PENDING', 'Новая задача 9');
+
+ALTER SEQUENCE tasks_id_seq RESTART WITH 20

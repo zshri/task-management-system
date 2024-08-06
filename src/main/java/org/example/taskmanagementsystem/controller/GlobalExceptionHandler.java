@@ -2,16 +2,22 @@ package org.example.taskmanagementsystem.controller;
 
 
 import jakarta.validation.ConstraintViolationException;
+
 import lombok.extern.slf4j.Slf4j;
 import org.example.taskmanagementsystem.exception.*;
+import org.example.taskmanagementsystem.model.dto.ResponseError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.nio.file.AccessDeniedException;
+import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -20,58 +26,91 @@ public class GlobalExceptionHandler {
 
 
 
-    @ExceptionHandler(TaskCommentNotFoundException.class)
-    public ResponseEntity<String> handleTaskCommentNotFoundException(TaskCommentNotFoundException ex) {
-        return new ResponseEntity<>("Access denied", HttpStatus.CONFLICT);
+    @ExceptionHandler(AccessErrorException.class)
+    public ResponseEntity<ResponseError> handleAccessErrorException(AccessErrorException e) {
+        return createErrorResponse(e, HttpStatus.LOCKED);
     }
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
-        return new ResponseEntity<>("Access denied", HttpStatus.LOCKED);
+
+
+    @ExceptionHandler(TaskCommentNotFoundException.class)
+    public ResponseEntity<ResponseError> handleTaskCommentNotFoundException(TaskCommentNotFoundException e) {
+        return createErrorResponse(e, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(TaskNotFoundException.class)
-    public ResponseEntity<String> handleTaskNotFoundException(TaskNotFoundException ex) {
-        return new ResponseEntity<>("Task not found", HttpStatus.CONFLICT);
+    public ResponseEntity<ResponseError> handleTaskNotFoundException(TaskNotFoundException e) {
+        return createErrorResponse(e, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(AssigneeNotFoundException.class)
-    public ResponseEntity<String> handleAssigneeNotFoundException(AssigneeNotFoundException ex) {
-        return new ResponseEntity<>("Assignee not found", HttpStatus.CONFLICT);
+    public ResponseEntity<ResponseError> handleAssigneeNotFoundException(AssigneeNotFoundException e) {
+        return createErrorResponse(e, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
-        return new ResponseEntity<>("User not found exists", HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<String> handleUserAlreadyExistsException(UserAlreadyExistsException e) {
-        return new ResponseEntity<>("User already exists", HttpStatus.CONFLICT);
+    public ResponseEntity<ResponseError> handleUserNotFoundException(UserNotFoundException e) {
+        return createErrorResponse(e, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<String> handleUsernameNotFoundException(UsernameNotFoundException e) {
-        return new ResponseEntity<>("Authentication failed", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ResponseError> handleUsernameNotFoundException(UsernameNotFoundException e) {
+        return createErrorResponse(e, HttpStatus.NOT_FOUND);
+    }
+
+
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ResponseError> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        List<String> errors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(FieldError::getDefaultMessage)
+                .toList();
+
+        ResponseError responseError = new ResponseError();
+        responseError.setStatus(HttpStatus.BAD_REQUEST.value());
+        responseError.setMessage("Validation failed");
+        responseError.setError(errors.toString());
+        responseError.setTimestamp(Instant.now().toString());
+
+        return new ResponseEntity<>(responseError, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
-        return new ResponseEntity<>("Validation exception: ", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ResponseError> handleConstraintViolationException(ConstraintViolationException e) {
+        return createErrorResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<String> handleBadCredentialsException(BadCredentialsException e) {
-        return new ResponseEntity<>("Bad credentials", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ResponseError> handleBadCredentialsException(BadCredentialsException e) {
+        return createErrorResponse(e, HttpStatus.UNAUTHORIZED);
+    }
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ResponseError> handleUserAlreadyExistsException(UserAlreadyExistsException e) {
+        return createErrorResponse(e, HttpStatus.CONFLICT);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<String> handleException(Exception e) {
-//
-//        return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ResponseError> handleException(Exception e) {
+        ResponseError responseError = new ResponseError();
+        responseError.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        responseError.setMessage("unknown error");
+        responseError.setError(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        responseError.setTimestamp(Instant.now().toString());
+        return new ResponseEntity<>(responseError, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     /*
     * Одна ошибка идет в JwtFilter
     *
     * */
+
+    private ResponseEntity<ResponseError> createErrorResponse(Exception e, HttpStatus status) {
+        ResponseError responseError = new ResponseError();
+        responseError.setStatus(status.value());
+        responseError.setMessage(e.getMessage());
+        responseError.setError(status.getReasonPhrase());
+        responseError.setTimestamp(Instant.now().toString());
+        return new ResponseEntity<>(responseError, status);
+    }
 }

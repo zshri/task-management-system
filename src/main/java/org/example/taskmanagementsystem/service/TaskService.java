@@ -3,8 +3,10 @@ package org.example.taskmanagementsystem.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.taskmanagementsystem.exception.AccessErrorException;
 import org.example.taskmanagementsystem.exception.AssigneeNotFoundException;
 import org.example.taskmanagementsystem.exception.TaskNotFoundException;
+import org.example.taskmanagementsystem.exception.UserNotFoundException;
 import org.example.taskmanagementsystem.model.*;
 import org.example.taskmanagementsystem.model.dto.CreateTaskDto;
 import org.example.taskmanagementsystem.model.dto.ResponseTaskDto;
@@ -17,7 +19,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,10 @@ public class TaskService {
     private final UserRepository userRepository;
     private final UserService userService;
 
-    public Page<ResponseTaskDto> getTaskPage(Long userId, int page, int size, TaskStatus status, TaskPriority priority, TaskFilterType filterType) {
+    public Page<ResponseTaskDto> getTaskPage(Long userId, int page, int size, TaskStatus status, TaskPriority priority, TaskFilterType filterType) throws UserNotFoundException {
+
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
 
@@ -70,7 +74,7 @@ public class TaskService {
 
         if (createTaskDto.getAssignee() != null) {
             assigneeById = userRepository.findById(createTaskDto.getAssignee())
-                    .orElseThrow(() -> new AssigneeNotFoundException(""));
+                    .orElseThrow(() -> new AssigneeNotFoundException("Assignee not found"));
         }
 
         Task task = Task.builder()
@@ -89,7 +93,7 @@ public class TaskService {
         return convertToDto(save);
     }
 
-    public ResponseTaskDto update(Long id, CreateTaskDto createTaskDto, User user) throws TaskNotFoundException, AccessDeniedException, AssigneeNotFoundException {
+    public ResponseTaskDto update(Long id, CreateTaskDto createTaskDto, User user) throws TaskNotFoundException, AssigneeNotFoundException, AccessErrorException {
 
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found"));
@@ -101,7 +105,7 @@ public class TaskService {
             log.info("User with ID {} is updating task with ID {} as the assignee", user.getId(), id);
             return updateTaskStatus(task, createTaskDto);
         } else {
-            throw new AccessDeniedException("You do not have permission to update this task");
+            throw new AccessErrorException("You do not have permission to update this task");
         }
     }
 
@@ -134,11 +138,11 @@ public class TaskService {
         return convertToDto(updatedTask);
     }
 
-    public void delete(Long taskId, User user) throws TaskNotFoundException, AccessDeniedException {
+    public void delete(Long taskId, User user) throws TaskNotFoundException, AccessErrorException {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found"));
         if (!task.getAuthor().equals(user)) {
-            throw new AccessDeniedException("You do not have permission to update this task");
+            throw new AccessErrorException("You do not have permission to delete this task");
         }
         log.info("Deleting task with id: {}", taskId);
         taskRepository.delete(task);
