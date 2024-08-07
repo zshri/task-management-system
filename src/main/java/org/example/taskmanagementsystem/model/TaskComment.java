@@ -5,31 +5,37 @@ import lombok.*;
 
 import java.time.Instant;
 
-@Entity
-@Table(name = "comments")
+
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "comments",
+        indexes = {@Index(name = "idx_task_id", columnList = "task_id")}
+)
 public class TaskComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "content", nullable = false, length = 500)
     private String content;
 
+    @Column(name = "create_at", nullable = false, updatable = false)
     private Instant createAt;
 
+    @Column(name = "update_at")
     private Instant updateAt;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
     @ManyToOne
-    @JoinColumn(name = "task_id")
+    @JoinColumn(name = "task_id", nullable = false)
     private Task task;
 
 }

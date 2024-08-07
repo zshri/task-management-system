@@ -38,7 +38,16 @@ Task Management System - это приложение на Spring Boot, разр�
     cd task-management-system
     ```
 
-2. **Разверните в docker-compose:**
+2. **Заполните переменные в файле env:** (например так)
+    ```sh
+    DB_USERNAME=username123
+    DB_PASSWORD=password123
+    EXPIRATION=86400000
+    JWT_SECRET_KEY=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    ```
+
+
+3. **Разверните в docker-compose:**
 
     ```sh
     docker-compose up

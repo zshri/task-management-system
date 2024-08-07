@@ -1,8 +1,10 @@
 package org.example.taskmanagementsystem.model.dto;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+@Schema(description = "DTO для возврата ошибки")
 @Data
 public class ResponseError {
     private int status;
