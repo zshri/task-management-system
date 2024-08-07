@@ -52,8 +52,8 @@ public class UserController {
     @GetMapping
     public ResponseEntity<Page<ResponseUserDto>> listUsers(@RequestParam(defaultValue = "0") int page,
                                        @RequestParam(defaultValue = "12") int size) {
-        Page<ResponseUserDto> users = userService.getUsersPage(page, size);
-        return ResponseEntity.ok(users);
+
+        return ResponseEntity.ok(userService.getUsersPage(page, size));
     }
 
     @Operation(
@@ -75,8 +75,8 @@ public class UserController {
     })
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseUserDto> getUserProfile(@Parameter(description = "ID пользователя", required = true)@PathVariable @Positive(message = "ID must be positive") Long userId) throws UserNotFoundException {
-        ResponseUserDto userProfile = userService.getUserProfile(userId);
-        return ResponseEntity.ok(userProfile);
+
+        return ResponseEntity.ok(userService.getUserProfile(userId));
     }
 
 

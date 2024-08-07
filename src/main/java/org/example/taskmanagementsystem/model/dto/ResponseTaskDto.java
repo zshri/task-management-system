@@ -7,7 +7,7 @@ import org.example.taskmanagementsystem.model.TaskStatus;
 
 import java.time.Instant;
 
-@Schema(description = "Задача DTO")
+@Schema(description = "DTO для возврата задачи")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

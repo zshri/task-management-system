@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.*;
 @SecurityRequirement(name = "JWT")
 @Slf4j
 @Validated
-//@CrossOrigin(origins = "https://localhost:3000")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -102,15 +101,9 @@ public class TaskController {
                                                                      description = "Тип фильтра для применения (AUTHOR, ASSIGNEE, ALL).",
                                                                      in = ParameterIn.QUERY,
                                                                      schema = @Schema(implementation = TaskFilterType.class, defaultValue = "ALL")
-                                                             )@RequestParam(defaultValue = "ALL") TaskFilterType filterType
-    ) throws UserNotFoundException {
-        Page<ResponseTaskDto> tasks;
-        if (userId != null) {
-            tasks = taskService.getTaskPage(userId, page, size, status, priority, filterType );
-        } else {
-            tasks = taskService.getTaskPage(user.getId(), page, size, status, priority, filterType );
-        }
-        return ResponseEntity.ok(tasks);
+                                                             )@RequestParam(defaultValue = "ALL") TaskFilterType filterType) throws UserNotFoundException {
+
+        return ResponseEntity.ok(taskService.getTaskPage(userId, user.getId(), page, size, status, priority, filterType ));
     }
 
     @Operation(

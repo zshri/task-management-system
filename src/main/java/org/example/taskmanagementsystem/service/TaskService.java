@@ -1,6 +1,7 @@
 package org.example.taskmanagementsystem.service;
 
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.taskmanagementsystem.exception.AccessErrorException;
@@ -33,7 +34,15 @@ public class TaskService {
     private final UserRepository userRepository;
     private final UserService userService;
 
-    public Page<ResponseTaskDto> getTaskPage(Long userId, int page, int size, TaskStatus status, TaskPriority priority, TaskFilterType filterType) throws UserNotFoundException {
+    public Page<ResponseTaskDto> getTaskPage(Long reqUserId, Long currentUserId, int page, int size, TaskStatus status, TaskPriority priority, TaskFilterType filterType) throws UserNotFoundException {
+
+        Long userId;
+
+        if (reqUserId != null) {
+            userId = reqUserId;
+        } else {
+            userId = currentUserId;
+        }
 
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -68,6 +77,7 @@ public class TaskService {
         return convertToDto(task);
     }
 
+    @Transactional
     public ResponseTaskDto save(CreateTaskDto createTaskDto, User user) throws AssigneeNotFoundException {
 
         User assigneeById = null;
@@ -93,15 +103,16 @@ public class TaskService {
         return convertToDto(save);
     }
 
+    @Transactional
     public ResponseTaskDto update(Long id, CreateTaskDto createTaskDto, User user) throws TaskNotFoundException, AssigneeNotFoundException, AccessErrorException {
 
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found"));
 
-        if (task.getAuthor().equals(user)) {
+        if (task.getAuthor().getId().equals(user.getId())) {
             log.info("User with ID {} is updating task with ID {} as the author", user.getId(), id);
             return updateTask(task, createTaskDto);
-        } else if (task.getAssignee().equals(user)) {
+        } else if (task.getAssignee().getId().equals(user.getId())) {
             log.info("User with ID {} is updating task with ID {} as the assignee", user.getId(), id);
             return updateTaskStatus(task, createTaskDto);
         } else {
@@ -138,6 +149,7 @@ public class TaskService {
         return convertToDto(updatedTask);
     }
 
+    @Transactional
     public void delete(Long taskId, User user) throws TaskNotFoundException, AccessErrorException {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found"));

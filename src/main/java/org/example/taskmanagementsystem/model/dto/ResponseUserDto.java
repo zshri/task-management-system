@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Schema(description = "Пользователь DTO")
+@Schema(description = "DTO для возврата пользователя")
 @Data
 @Builder
 @NoArgsConstructor

@@ -1,5 +1,6 @@
 package org.example.taskmanagementsystem.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,7 +9,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.taskmanagementsystem.model.User;
+import org.example.taskmanagementsystem.model.dto.ResponseError;
 import org.example.taskmanagementsystem.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.Instant;
 
 @Slf4j
 @Component
@@ -53,9 +57,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             User user = userRepository.findByEmail(userEmail);
 
             if (user == null) {
-                logger.error("Cannot set user authentication");
+                log.error("Cannot set user authentication");
+                ObjectMapper objectMapper = new ObjectMapper();
+
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("User not found");
+                response.setContentType("application/json");
+
+                ResponseError responseError = new ResponseError();
+                responseError.setStatus(HttpStatus.UNAUTHORIZED.value());
+                responseError.setMessage("authentication failed");
+                responseError.setError("authentication failed");
+                responseError.setTimestamp(Instant.now().toString());
+
+                response.getWriter().write(objectMapper.writeValueAsString(responseError));
                 return;
             }
 

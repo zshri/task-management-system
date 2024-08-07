@@ -1,5 +1,6 @@
 package org.example.taskmanagementsystem.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.taskmanagementsystem.exception.AccessErrorException;
@@ -50,6 +51,7 @@ public class TaskCommentService {
         return taskCommentDto;
     }
 
+    @Transactional
     public ResponseTaskCommentDto saveComment(User user, CreateTaskCommentDto createTaskCommentDto) throws TaskNotFoundException {
 
         Task task = taskRepository.findById(createTaskCommentDto.getTaskId())
@@ -64,6 +66,7 @@ public class TaskCommentService {
         return convertToDto(save);
     }
 
+    @Transactional
     public ResponseTaskCommentDto updateComment(Long id, User user, CreateTaskCommentDto createTaskCommentDto) throws TaskCommentNotFoundException, AccessErrorException {
 
         TaskComment taskComment = taskCommentRepository.findById(id)

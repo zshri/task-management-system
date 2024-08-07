@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Comment Controller")
 @SecurityRequirement(name = "JWT")
 @Slf4j
-//@CrossOrigin(origins = "https://localhost:3000")
 @Validated
 @RequiredArgsConstructor
 @RestController
@@ -60,12 +59,10 @@ public class CommentController {
     })
     @GetMapping
     public ResponseEntity<Page<ResponseTaskCommentDto>> getCommentPage(@Parameter(description = "ID задачи", required = true)@RequestParam @Positive(message = "Task ID must be a positive number") Long taskId,
-                                                                       @Parameter(description = "Номер страницы", required = false) @RequestParam(defaultValue = "0") int page,
-                                                                       @Parameter(description = "Размер страницы", required = false) @RequestParam(defaultValue = "12") @Max(value = 50, message = "Page size max 50") int size) throws TaskNotFoundException {
-        Page<ResponseTaskCommentDto> taskCommentDtoPage;
-        taskCommentDtoPage = taskCommentService.getCommentPage(taskId, page, size);
+                                                                       @Parameter(description = "Номер страницы") @RequestParam(defaultValue = "0") int page,
+                                                                       @Parameter(description = "Размер страницы") @RequestParam(defaultValue = "12") @Max(value = 50, message = "Page size max 50") int size) throws TaskNotFoundException {
 
-        return ResponseEntity.ok(taskCommentDtoPage);
+        return ResponseEntity.ok(taskCommentService.getCommentPage(taskId, page, size));
     }
 
     @Operation(
