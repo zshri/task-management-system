@@ -41,11 +41,23 @@ public class TaskControllerIntegrationTest {
     @Test
     @Transactional
     @WithUserDetails(value = "jo22hrn.doe@example.com")
-    public void testGetAllTasks() throws Exception {
+    public void testGetAllTasks_SuccessForCurrentUser() throws Exception {
 
         mockMvc.perform(get("/api/v1/tasks"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id", is(10))) // Проверка, что первая задача имеет id = 10
+                .andExpect(jsonPath("$.content[0].id", is(10)))
+                .andExpect(jsonPath("$.content[1].id", is(9)));
+    }
+
+    @Test
+    @Transactional
+    @WithUserDetails(value = "jo22hrn.doe@example.com")
+    public void testGetAllTasks_SuccessForAnyUser() throws Exception {
+
+        mockMvc.perform(get("/api/v1/tasks")
+                        .param("userId", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id", is(10)))
                 .andExpect(jsonPath("$.content[1].id", is(9)));
     }
 
