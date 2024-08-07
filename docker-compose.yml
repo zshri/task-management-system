@@ -3,6 +3,21 @@ version: '3'
 
 services:
 
+  tms-app:
+    container_name: tms-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - tms-network
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - tms-postgres
+
   tms-postgres:
     container_name: tms-postgres
     image: postgres:14-alpine
