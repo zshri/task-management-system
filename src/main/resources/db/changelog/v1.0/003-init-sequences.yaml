@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: zshri
+      changes:
+        - sql:
+            comment: Restart sequence comments_id_seq
+            sql: ALTER SEQUENCE comments_id_seq RESTART WITH 20
+        - sql:
+            comment: Restart sequence tasks_id_seq
+            sql: ALTER SEQUENCE tasks_id_seq RESTART WITH 20
+        - sql:
+            comment: Restart sequence users_id_seq
+            sql: ALTER SEQUENCE users_id_seq RESTART WITH 10

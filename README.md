@@ -19,6 +19,7 @@ Task Management System - это приложение на Spring Boot, разр�
 - **Spring-boot 3.3.2**
 - **JWT**
 - **Swagger**
+- **Liquibase**
 
 ## Предварительные требования
 

@@ -8,5 +8,3 @@ INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, descript
 INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (2, 2, '2024-08-06 04:49:10.663884 +00:00', 8, null, 'Описание новой задачи', 'LOW', 'PENDING', 'Новая задача 8');
 INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (1, 2, '2024-08-06 04:49:10.020634 +00:00', 7, null, 'Описание новой задачи', 'LOW', 'PENDING', 'Новая задача 7');
 INSERT INTO public.tasks (assignee_id, author_id, created, id, updated, description, priority, status, title) VALUES (1, 2, '2024-08-06 04:49:13.700360 +00:00', 9, null, 'Описание новой задачи', 'LOW', 'PENDING', 'Новая задача 9');
-
-ALTER SEQUENCE tasks_id_seq RESTART WITH 20

@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: zshri
+      changes:
+        - sqlFile:
+            path: classpath:db/data/users.sql
+            encoding: UTF-8
+            relativeToChangelogFile: false
+  - changeSet:
+      id: 2
+      author: zshri
+      changes:
+        - sqlFile:
+            path: classpath:db/data/tasks.sql
+            encoding: UTF-8
+            relativeToChangelogFile: false
+  - changeSet:
+      id: 3
+      author: zshri
+      changes:
+        - sqlFile:
+            path: classpath:db/data/comments.sql
+            encoding: UTF-8
+            relativeToChangelogFile: false

@@ -1,0 +1,185 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1723124718542-1
+      author: zshri
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_comments
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: content
+                  type: VARCHAR(500)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: create_at
+                  type: DATETIME
+              - column:
+                  name: update_at
+                  type: DATETIME
+              - column:
+                  constraints:
+                    nullable: false
+                  name: author_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: task_id
+                  type: BIGINT
+            tableName: comments
+  - changeSet:
+      id: 1723124718542-2
+      author: zshri
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_tasks
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: title
+                  type: VARCHAR(50)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: description
+                  type: VARCHAR(1000)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: priority
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: author_id
+                  type: BIGINT
+              - column:
+                  name: assignee_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created
+                  type: DATETIME
+              - column:
+                  name: updated
+                  type: DATETIME
+            tableName: tasks
+  - changeSet:
+      id: 1723124718542-3
+      author: zshri
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: username
+                  type: VARCHAR(255)
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+            tableName: users
+  - changeSet:
+      id: 1723124718542-4
+      author: zshri
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: email
+            constraintName: uc_users_email
+            tableName: users
+  - changeSet:
+      id: 1723124718542-7
+      author: zshri
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: author_id
+            baseTableName: comments
+            constraintName: FK_COMMENTS_ON_AUTHOR
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1723124718542-8
+      author: zshri
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: task_id
+            baseTableName: comments
+            constraintName: FK_COMMENTS_ON_TASK
+            referencedColumnNames: id
+            referencedTableName: tasks
+        - createIndex:
+            columns:
+              - column:
+                  name: task_id
+            indexName: idx_task_id
+            tableName: comments
+  - changeSet:
+      id: 1723124718542-9
+      author: zshri
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: assignee_id
+            baseTableName: tasks
+            constraintName: FK_TASKS_ON_ASSIGNEE
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1723124718542-10
+      author: zshri
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: author_id
+            baseTableName: tasks
+            constraintName: FK_TASKS_ON_AUTHOR
+            referencedColumnNames: id
+            referencedTableName: users
+        - createIndex:
+            columns:
+              - column:
+                  name: author_id
+            indexName: idx_author_id
+            tableName: tasks
+
