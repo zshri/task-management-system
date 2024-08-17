@@ -3,11 +3,22 @@ version: '3'
 
 services:
 
+#  nginx:
+#    image: nginx:latest
+#    ports:
+#      - 80:80
+#    networks:
+#      - tms-network
+#    volumes:
+#      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+
   tms-app:
     container_name: tms-app
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile2
+      args:
+        DOCKER_BUILDKIT: 1
     ports:
       - 8080:8080
     networks:
