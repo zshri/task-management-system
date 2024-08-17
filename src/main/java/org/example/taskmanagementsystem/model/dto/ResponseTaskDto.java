@@ -21,7 +21,7 @@ public class ResponseTaskDto {
     private TaskPriority priority;
     private ResponseUserDto author;
     private ResponseUserDto assignee;
-    private Instant created;
-    private Instant updated;
+    private Instant createAt;
+    private Instant updateAt;
 
 }

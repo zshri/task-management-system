@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1723912187908-1
+      author: zshri
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - renameColumn:
+            oldColumnName: created
+            newColumnName: create_at
+            columnDataType: DATETIME
+            tableName: tasks
+        - renameColumn:
+            oldColumnName: updated
+            newColumnName: update_at
+            columnDataType: DATETIME
+            tableName: tasks

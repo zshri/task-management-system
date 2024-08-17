@@ -2,6 +2,8 @@ package org.example.taskmanagementsystem.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
@@ -24,9 +26,11 @@ public class TaskComment {
     @Column(name = "content", nullable = false, length = 500)
     private String content;
 
+    @CreationTimestamp
     @Column(name = "create_at", nullable = false, updatable = false)
     private Instant createAt;
 
+    @UpdateTimestamp
     @Column(name = "update_at")
     private Instant updateAt;
 

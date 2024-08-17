@@ -15,7 +15,7 @@ public interface TaskMapper {
     @Mapping(source = "priority", target = "priority")
     @Mapping(source = "author", target = "author")
     @Mapping(source = "assignee", target = "assignee")
-    @Mapping(source = "created", target = "created")
-    @Mapping(source = "updated", target = "updated")
+    @Mapping(source = "createAt", target = "createAt")
+    @Mapping(source = "updateAt", target = "updateAt")
     ResponseTaskDto toDto(Task task);
 }

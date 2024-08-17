@@ -22,8 +22,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-
 
 /**
  * Сервис для работы с задачами.
@@ -100,7 +98,6 @@ public class TaskService {
                 .priority(createTaskDto.getPriority())
                 .author(user)
                 .assignee(assigneeById)
-                .created(Instant.now())
                 .build();
 
         Task save = taskRepository.save(task);
@@ -158,7 +155,6 @@ public class TaskService {
         task.setDescription(createTaskDto.getDescription());
         task.setStatus(createTaskDto.getStatus());
         task.setPriority(createTaskDto.getPriority());
-        task.setUpdated(Instant.now());
         Task updatedTask = taskRepository.save(task);
         log.info("Task with ID {} has been fully updated by user with ID {}", updatedTask.getId(), updatedTask.getAuthor().getId());
 
@@ -174,7 +170,6 @@ public class TaskService {
      */
     private ResponseTaskDto updateTaskStatus(Task task, CreateTaskDto createTaskDto) {
         task.setStatus(createTaskDto.getStatus());
-        task.setUpdated(Instant.now());
         Task updatedTask = taskRepository.save(task);
         log.info("Task with ID {} has been status updated by user with ID {}", updatedTask.getId(), updatedTask.getAssignee().getId());
         return taskMapper.toDto(updatedTask);

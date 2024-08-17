@@ -20,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 
 /**
  * Сервис для управления комментариями к задачам.
@@ -72,12 +71,12 @@ public class TaskCommentService {
 
         TaskComment taskComment = TaskComment.builder()
                 .content(createTaskCommentDto.getContent())
-                .createAt(Instant.now())
                 .author(user)
                 .task(task).build();
         TaskComment save = taskCommentRepository.save(taskComment);
         return taskCommentMapper.toDto(save);
     }
+
 
     /**
      * Обновляет существующий комментарий к задаче.
@@ -100,7 +99,6 @@ public class TaskCommentService {
         }
 
         taskComment.setContent(createTaskCommentDto.getContent());
-        taskComment.setUpdateAt(Instant.now());
         TaskComment update = taskCommentRepository.save(taskComment);
         return taskCommentMapper.toDto(update);
 

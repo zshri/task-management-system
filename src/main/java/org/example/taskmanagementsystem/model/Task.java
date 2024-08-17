@@ -2,6 +2,8 @@ package org.example.taskmanagementsystem.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.List;
@@ -43,18 +45,12 @@ public class Task {
     @JoinColumn(name = "assignee_id")
     private User assignee;
 
-    @Column(name = "created", nullable = false)
-    private Instant created;
+    @CreationTimestamp
+    @Column(updatable = false)
+    private Instant createAt;
 
-    @Column(name = "updated")
-    private Instant updated;
-
-
-//    @CreationTimestamp
-//    @Column(updatable = false)
-//    private Timestamp createdDate;
-//    @UpdateTimestamp
-//    private Timestamp lastModifiedDate;
+    @UpdateTimestamp
+    private Instant updateAt;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TaskComment> comments;
