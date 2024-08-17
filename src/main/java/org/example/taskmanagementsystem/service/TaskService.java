@@ -13,6 +13,8 @@ import org.example.taskmanagementsystem.model.dto.CreateTaskDto;
 import org.example.taskmanagementsystem.model.dto.ResponseTaskDto;
 import org.example.taskmanagementsystem.repository.TaskRepository;
 import org.example.taskmanagementsystem.repository.UserRepository;
+import org.example.taskmanagementsystem.specification.TaskSpecification;
+import org.example.taskmanagementsystem.util.TaskMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,10 +23,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import jakarta.persistence.criteria.Predicate;
 
+
+/**
+ * Сервис для работы с задачами.
+ * Предоставляет методы для создания, обновления, удаления и получения задач,
+ * а также для фильтрации задач по различным критериям.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -32,51 +37,52 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
+    private final TaskMapper taskMapper;
 
+    /**
+     * Получает страницу с задачами с учетом фильтрации и сортировки.
+     *
+     * @param reqUserId идентификатор пользователя, запросившего задачи (может быть null)
+     * @param currentUserId идентификатор текущего пользователя
+     * @param page номер страницы
+     * @param size размер страницы
+     * @param status статус задачи
+     * @param priority приоритет задачи
+     * @param filterType тип фильтрации задач
+     * @return страница с задачами в формате DTO
+     * @throws UserNotFoundException если пользователь не найден
+     */
     public Page<ResponseTaskDto> getTaskPage(Long reqUserId, Long currentUserId, int page, int size, TaskStatus status, TaskPriority priority, TaskFilterType filterType) throws UserNotFoundException {
 
-        Long userId;
-
-        if (reqUserId != null) {
-            userId = reqUserId;
-        } else {
-            userId = currentUserId;
-        }
-
+        Long userId = reqUserId != null ? reqUserId : currentUserId;
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
-
-        Specification<Task> specification = (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            switch (filterType) {
-                case AUTHOR -> predicates.add(criteriaBuilder.equal(root.get("author").get("id"), userId));
-                case ASSIGNEE -> predicates.add(criteriaBuilder.equal(root.get("assignee").get("id"), userId));
-                case ALL -> predicates.add(criteriaBuilder.or(
-                            criteriaBuilder.equal(root.get("author").get("id"), userId),
-                            criteriaBuilder.equal(root.get("assignee").get("id"), userId)));
-            }
-            if (status != null) {
-                predicates.add(criteriaBuilder.equal(root.get("status"), status));
-            }
-            if (priority != null) {
-                predicates.add(criteriaBuilder.equal(root.get("priority"), priority));
-            }
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
-
+        Specification<Task> specification = TaskSpecification.filterTasks(userId, status, priority, filterType);
         Page<Task> taskPage = taskRepository.findAll(specification, pageable);
-        return taskPage.map(this::convertToDto);
+        return taskPage.map(taskMapper::toDto);
     }
 
+    /**
+     * Получает задачу по её идентификатору.
+     *
+     * @param id идентификатор задачи
+     * @return задача в формате DTO
+     * @throws TaskNotFoundException если задача не найдена
+     */
     public ResponseTaskDto getById(Long id) throws TaskNotFoundException {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
-        return convertToDto(task);
+        Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException("Task not found"));
+        return taskMapper.toDto(task);
     }
 
+    /**
+     * Сохраняет новую задачу.
+     *
+     * @param createTaskDto данные для создания задачи
+     * @param user пользователь, создающий задачу
+     * @return сохраненная задача в формате DTO
+     * @throws AssigneeNotFoundException если исполнитель задачи не найден
+     */
     @Transactional
     public ResponseTaskDto save(CreateTaskDto createTaskDto, User user) throws AssigneeNotFoundException {
 
@@ -100,9 +106,20 @@ public class TaskService {
         Task save = taskRepository.save(task);
         log.info("Task with id {} save", save.getId());
 
-        return convertToDto(save);
+        return taskMapper.toDto(save);
     }
 
+    /**
+     * Обновляет существующую задачу.
+     *
+     * @param id идентификатор задачи
+     * @param createTaskDto данные для обновления задачи
+     * @param user пользователь, обновляющий задачу
+     * @return обновленная задача в формате DTO
+     * @throws TaskNotFoundException если задача не найдена
+     * @throws AssigneeNotFoundException если исполнитель задачи не найден
+     * @throws AccessErrorException если у пользователя нет прав на обновление задачи
+     */
     @Transactional
     public ResponseTaskDto update(Long id, CreateTaskDto createTaskDto, User user) throws TaskNotFoundException, AssigneeNotFoundException, AccessErrorException {
 
@@ -120,6 +137,14 @@ public class TaskService {
         }
     }
 
+    /**
+     * Обновляет все поля задачи.
+     *
+     * @param task задача для обновления
+     * @param createTaskDto данные для обновления задачи
+     * @return обновленная задача в формате DTO
+     * @throws AssigneeNotFoundException если исполнитель задачи не найден
+     */
     private ResponseTaskDto updateTask(Task task, CreateTaskDto createTaskDto) throws AssigneeNotFoundException {
 
         if (createTaskDto.getAssignee() != null) {
@@ -137,43 +162,41 @@ public class TaskService {
         Task updatedTask = taskRepository.save(task);
         log.info("Task with ID {} has been fully updated by user with ID {}", updatedTask.getId(), updatedTask.getAuthor().getId());
 
-        return convertToDto(updatedTask);
+        return taskMapper.toDto(updatedTask);
     }
 
+    /**
+     * Обновляет статус задачи.
+     *
+     * @param task задача для обновления
+     * @param createTaskDto данные для обновления задачи
+     * @return обновленная задача в формате DTO
+     */
     private ResponseTaskDto updateTaskStatus(Task task, CreateTaskDto createTaskDto) {
         task.setStatus(createTaskDto.getStatus());
         task.setUpdated(Instant.now());
-
         Task updatedTask = taskRepository.save(task);
         log.info("Task with ID {} has been status updated by user with ID {}", updatedTask.getId(), updatedTask.getAssignee().getId());
-        return convertToDto(updatedTask);
+        return taskMapper.toDto(updatedTask);
     }
 
+    /**
+     * Удаляет задачу.
+     *
+     * @param taskId идентификатор задачи
+     * @param user пользователь, удаляющий задачу
+     * @throws TaskNotFoundException если задача не найдена
+     * @throws AccessErrorException если у пользователя нет прав на удаление задачи
+     */
     @Transactional
     public void delete(Long taskId, User user) throws TaskNotFoundException, AccessErrorException {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException("Task not found"));
         if (!task.getAuthor().equals(user)) {
             throw new AccessErrorException("You do not have permission to delete this task");
         }
         log.info("Deleting task with id: {}", taskId);
         taskRepository.delete(task);
         log.info("Task with id {} deleted successfully", taskId);
-    }
-
-    private ResponseTaskDto convertToDto(Task task) {
-        ResponseTaskDto taskDto = ResponseTaskDto.builder()
-                .id(task.getId())
-                .title(task.getTitle())
-                .description(task.getDescription())
-                .status(task.getStatus())
-                .priority(task.getPriority())
-                .author(userService.convertToDto(task.getAuthor()))
-                .assignee(task.getAssignee() != null ? userService.convertToDto(task.getAssignee()) : null)
-                .created(task.getCreated())
-                .updated(task.getUpdated())
-                .build();
-        return taskDto;
     }
 
 }

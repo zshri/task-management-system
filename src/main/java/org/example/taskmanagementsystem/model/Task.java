@@ -49,7 +49,16 @@ public class Task {
     @Column(name = "updated")
     private Instant updated;
 
+
+//    @CreationTimestamp
+//    @Column(updatable = false)
+//    private Timestamp createdDate;
+//    @UpdateTimestamp
+//    private Timestamp lastModifiedDate;
+
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TaskComment> comments;
+
+
 
 }
