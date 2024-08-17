@@ -19,9 +19,11 @@ public class CreateTaskCommentDto {
 
     @NotBlank(message = "Content cannot be blank")
     @Size(min = 1, max = 500, message = "Content must be between 1 and 500 characters")
+    @Schema(description = "Содержимое комментария", example = "Это пример комментария", required = true)
     private String content;
 
     @NotNull(message = "Task ID cannot be null")
     @Positive(message = "Task ID must be a positive number")
+    @Schema(description = "Идентификатор задачи, к которой относится комментарий", example = "1", required = true)
     private Long taskId;
 }
