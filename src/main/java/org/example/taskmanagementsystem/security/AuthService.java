@@ -12,6 +12,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Сервис для аутентификации и регистрации пользователей.
+ * Предоставляет методы для аутентификации пользователей и создания новых учетных записей.
+ */
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -22,6 +26,13 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
+    /**
+     * Аутентифицирует пользователя по email и паролю.
+     *
+     * @param authRequest запрос на аутентификацию, содержащий email и пароль
+     * @return ответ с JWT токеном доступа
+     * @throws BadCredentialsException если предоставленные учетные данные неверны
+     */
     public AuthResponse authenticate(AuthRequest authRequest) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
@@ -37,6 +48,13 @@ public class AuthService {
                 .build();
     }
 
+    /**
+     * Регистрирует нового пользователя.
+     *
+     * @param registerRequest запрос на регистрацию, содержащий данные нового пользователя
+     * @return ответ с JWT токеном доступа
+     * @throws UserAlreadyExistsException если пользователь с таким email уже существует
+     */
     @Transactional
     public AuthResponse register(RegisterRequest registerRequest) throws UserAlreadyExistsException {
 
