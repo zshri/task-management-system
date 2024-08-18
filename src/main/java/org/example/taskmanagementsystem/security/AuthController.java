@@ -13,6 +13,7 @@ import org.example.taskmanagementsystem.exception.UserAlreadyExistsException;
 
 import org.example.taskmanagementsystem.model.dto.ResponseError;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -74,8 +75,14 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) throws UserAlreadyExistsException {
         log.info("Request for register user -> {}", registerRequest.getEmail());
-        AuthResponse registered = authService.register(registerRequest);
+        AuthResponse authResponse;
+        try {
+            authResponse = authService.register(registerRequest);
+        } catch (DataIntegrityViolationException e) {
+            throw new UserAlreadyExistsException("User with email: " + registerRequest.getEmail() + " already exists");
+        }
+
         log.info("User successfully registered -> {}", registerRequest.getEmail());
-        return ResponseEntity.ok(registered);
+        return ResponseEntity.ok(authResponse);
     }
 }

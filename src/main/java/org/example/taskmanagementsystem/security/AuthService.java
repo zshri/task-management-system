@@ -3,7 +3,6 @@ package org.example.taskmanagementsystem.security;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.taskmanagementsystem.exception.UserAlreadyExistsException;
 import org.example.taskmanagementsystem.model.User;
 import org.example.taskmanagementsystem.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,14 +52,9 @@ public class AuthService {
      *
      * @param registerRequest запрос на регистрацию, содержащий данные нового пользователя
      * @return ответ с JWT токеном доступа
-     * @throws UserAlreadyExistsException если пользователь с таким email уже существует
      */
     @Transactional
-    public AuthResponse register(RegisterRequest registerRequest) throws UserAlreadyExistsException {
-
-        if (userRepository.findByEmail(registerRequest.getEmail()) != null) {
-            throw new UserAlreadyExistsException("User already exists");
-        }
+    public AuthResponse register(RegisterRequest registerRequest) {
 
         User user = User.builder()
                 .username(registerRequest.getUsername())
@@ -69,6 +63,7 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
+
         log.info("User successfully saved in database -> {}", registerRequest.getUsername());
 
         String accessToken = jwtService.generateToken(user);
